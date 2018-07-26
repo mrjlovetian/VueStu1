@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="vue.js"></script>
+  <script src="vue-resource.js"></script>
+  <style>
+    .gray {
+      background-color: cornflowerblue
+    }
+
+  </style>
+  <script>
+    window.onload = function () {
+      new Vue({
+        el: 'body',
+        data: {
+          datasource: [],
+          nowindex: -1,
+          searchTex: '',
+        },
+        methods: {
+          get(ev) {
+            // alert("message")
+            // 分别表示键盘向下按钮，键盘向上按钮
+            if (ev.keyCode == 38 || ev.keyCode == 40) {
+              return;
+            }
+
+            // 13表示按下回车
+            if (ev.keyCode == 13) {
+              window.open('https://www.baidu.com/s?wd=', this.searchTex)
+              this.searchTex = '';
+              return
+            }
+
+            this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su', {
+              wd: this.searchTex
+            }, {
+              jsonp: 'cb'
+            }).then(res => {
+              this.datasource = res.data.s;
+            })
+          },
+          up() {
+            this.nowindex--;
+            if (this.nowindex == -1) {
+              this.nowindex = this.datasource.length - 1
+            }
+            this.searchTex = this.datasource[this.nowindex]
+          },
+          down() {
+            this.nowindex++;
+            if (this.nowindex == this.datasource.length) {
+              this.nowindex = 0;
+            }
+            this.searchTex = this.datasource[this.nowindex]
+          }
+        }
+      })
+    }
+
+  </script>
+</head>
+
+<body>
+  <div id="box">
+    <input type="text" @keyup="get($event)" @keydown.up="up" @keydown.down="down" v-model="searchTex">
+    <ul>
+      <li v-for="item in datasource" :key="item.id" :class="{gray:$index==nowindex}">{{item}}</li>
+    </ul>
+  </div>
+</body>
+
+</html>

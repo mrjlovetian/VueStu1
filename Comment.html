@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../../lib/bootstrap.min.css">
+  <script src="../../lib/jquery-1.7.2.js"></script>
+  <script src="../../lib/bootstrap.js"></script>
+  <script src="vue.js"></script>
+
+
+  <script>
+    window.onload = function () {
+      new Vue({
+        el: "#box",
+        data: {
+          datasource: [],
+          name: "",
+          pwd: "",
+          age: "",
+          nowIndex: -999
+        },
+        methods: {
+          add() {
+            // alert(1)
+            this.datasource.push({
+              name: this.name,
+              pwd: this.pwd,
+              age: this.age
+            })
+            this.reset()
+          },
+          reset() {
+            this.name = "",
+              this.pwd = "",
+              this.age = ""
+          },
+          removeall() {
+            this.datasource = [];
+          },
+          deleteMsg() {
+            this.datasource.splice(this.nowIndex, 1);
+          }
+        }
+      })
+    }
+
+  </script>
+</head>
+
+<body>
+  <div class="container" id="box">
+    <form role="form">
+      <div class="form-group">
+        <label for="username">用户名:</label>
+        <input type="text" id="username" placeholder="请输入用户名" class="form-control" v-model="name" />
+      </div>
+      <div class="form-group">
+        <label for="pwd">密 码:</label>
+        <input type="text" id="pwd" placeholder="请输入密码" class="form-control" v-model="pwd" />
+      </div>
+      <div class="form-group">
+        <label for="age">年 龄:</label>
+        <input type="text" id="age" placeholder="请输入年龄" class="form-control" v-model="age" />
+      </div>
+      <div class="form-group">
+        <input type="button" value="添加" class="btn btn-primary" v-on:click="add">
+        <input type="button" value="重置" class="btn btn-danger" v-on:click="reset">
+      </div>
+    </form>
+
+    <hr>
+    <table class="table table-bordered table-hover">
+      <caption class="h3 text-info">用户信息表</caption>
+      <tr class="text-center">
+        <td>序号</td>
+        <td>名字</td>
+        <td>密码</td>
+        <td>年龄</td>
+        <td>操作</td>
+      </tr>
+      <tr class="text-center" v-for="item in datasource">
+        <td>{{$index}}</td>
+        <td>{{item.name}}</td>
+        <td>{{item.pwd}}</td>
+        <td>{{item.age}}</td>
+        <td>
+          <button class="btn btn-danger" data-toggle="modal" data-target="#layer" v-on:click="nowIndex=$index">删除</button>
+        </td>
+      </tr>
+      <tr v-show="datasource.length!=0">
+        <td colspan="5" class="text-right">
+          <button class="btn btn-danger  btn-sm" v-on:click="removeall">全部删除</button>
+        </td>
+      </tr>
+      <tr v-show="datasource.length==0">
+        <td colspan="5" class="text-center">暂无数据</td>
+      </tr>
+    </table>
+
+    <!-- 模态弹出框 -->
+    <div role="dialog" class="modal fade bs-example-modal-sm" id="layer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span>&times;</span>
+            </button>
+            <h4 class="modal-title"> 确认删除吗?</h4>
+          </div>
+          <div class="modal-body text-right">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">取消</button>
+            <button type="button" data-dismiss="modal" class="btn btn-primary" v-on:click="deleteMsg">确定</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
